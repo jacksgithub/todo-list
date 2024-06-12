@@ -1,50 +1,49 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import TodoFormEdit from './TodoFormEdit';
 import { BsTrash } from 'react-icons/bs';
 import { BsPencil } from 'react-icons/bs';
 
-export default class Todo extends Component {
-	constructor(props) {
-		super(props);
-		this.state = { isEditing: false };
-		this.handleRemove = this.handleRemove.bind(this);
-		this.handleToggle = this.handleToggle.bind(this);
-		this.toggleEdit = this.toggleEdit.bind(this);
-		this.handleEdit = this.handleEdit.bind(this);
+export default function Todo({
+	id,
+	task,
+	done,
+	removeTodo,
+	editTodo,
+	toggleDone,
+}) {
+	const [isEditing, setIsEditing] = useState(false);
+
+	function handleRemove() {
+		removeTodo(id);
 	}
-	handleRemove() {
-		this.props.removeTodo(this.props.id);
+	function handleToggle() {
+		toggleDone(id);
 	}
-	handleToggle() {
-		this.props.handleToggle(this.props.id);
+	function toggleEdit() {
+		setIsEditing(!isEditing);
 	}
-	toggleEdit() {
-		this.setState({ isEditing: !this.state.isEditing });
-	}
-	handleEdit(task) {
-		this.setState({ isEditing: false });
-		this.props.editTodo(this.props.id, task);
+	function handleEdit(updatedTask) {
+		setIsEditing(false);
+		editTodo(id, updatedTask);
 	}
 
-	render() {
-		return (
-			<div className={`Todo${this.props.done ? ' done' : ''}`}>
-				{this.state.isEditing ? (
-					<TodoFormEdit handleEdit={this.handleEdit} task={this.props.task} />
-				) : (
-					<>
-						<span className="task-text" onClick={this.handleToggle}>
-							{this.props.task}
-						</span>
-						<span className="edit" onClick={this.toggleEdit}>
-							<BsPencil />
-						</span>
-						<span className="x" onClick={this.handleRemove}>
-							<BsTrash />
-						</span>
-					</>
-				)}
-			</div>
-		);
-	}
+	return (
+		<div className={`Todo${done ? ' done' : ''}`}>
+			{isEditing ? (
+				<TodoFormEdit handleEdit={handleEdit} task={task} />
+			) : (
+				<>
+					<span className="task-text" onClick={handleToggle}>
+						{task}
+					</span>
+					<span className="edit" onClick={toggleEdit}>
+						<BsPencil />
+					</span>
+					<span className="x" onClick={handleRemove}>
+						<BsTrash />
+					</span>
+				</>
+			)}
+		</div>
+	);
 }
